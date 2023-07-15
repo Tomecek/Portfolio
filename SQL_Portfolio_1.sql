@@ -7,47 +7,47 @@
 --ORDER BY 3,4;
 
 
---XXXXX Pomìr nakažených dle populace zemì
+--XXXXX Pomer nakaÅ¾enÃ½ch dle populace zeme
 SELECT location, total_cases, date, new_cases, total_deaths, population, (total_cases/population) AS nakazena_populace FROM PortfolioProjekt..CovidDeaths
 WHERE location LIKE '%Czechia%' AND total_deaths != 'NULL' AND new_cases > 0
 ORDER BY total_cases DESC;
 
 
---XXXXX Která zemì má nejvìtší pomìr nakažených øešení 1
---SELECT location, total_cases, date, new_cases, total_deaths, population, (total_cases/population) AS pomìr_nakažených FROM PortfolioProjekt..CovidDeaths
+--XXXXX KterÃ¡ zeme mÃ¡ nejvetÅ¡Ã­ pomer nakaÅ¾enÃ½ch reÅ¡enÃ­ 1
+--SELECT location, total_cases, date, new_cases, total_deaths, population, (total_cases/population) AS pomÃ¬r_nakaÅ¾enÃ½ch FROM PortfolioProjekt..CovidDeaths
 --WHERE date = '2021-04-30'
 --ORDER BY (total_cases/population) DESC;
 
---XXXXX Která zemì má nejvìtší pomìr nakažených øešení 2
-SELECT location, population, MAX(total_cases) AS Nejvìtší_poèet_nakažených, MAX((total_cases/population)*100) AS max_pomìr_nakažených FROM PortfolioProjekt..CovidDeaths
+--XXXXX KterÃ¡ zeme mÃ¡ nejvetÅ¡Ã­ pomer nakaÅ¾enÃ½ch reÅ¡enÃ­ 2
+SELECT location, population, MAX(total_cases) AS NejvÃ¬tÅ¡Ã­_poÃ¨et_nakaÅ¾enÃ½ch, MAX((total_cases/population)*100) AS max_pomÃ¬r_nakaÅ¾enÃ½ch FROM PortfolioProjekt..CovidDeaths
 GROUP BY location, population
-order by max_pomìr_nakažených DESC;
+order by max_pomÃ¬r_nakaÅ¾enÃ½ch DESC;
 
 
---XXXX Která zemì má nejvìtší poèet úmrtí na populaci
----Chyba s datovým typem, musel se pøedìlat total_deaths jako int
-SELECT location, MAX(cast(total_deaths as int)) AS umrtí  FROM PortfolioProjekt..CovidDeaths
-WHERE continent IS NOT NULL --Protože do datasetu se pak serou kontinenty 
+--XXXX KterÃ¡ zeme mÃ¡ nejvetÅ¡Ã­ pocet ÃºmrtÃ­ na populaci
+---Chyba s datovÃ½m typem, musel se predÃ¬lat total_deaths jako int
+SELECT location, MAX(cast(total_deaths as int)) AS umrtÃ­  FROM PortfolioProjekt..CovidDeaths
+WHERE continent IS NOT NULL --ProtoÅ¾e do datasetu se pak serou kontinenty 
 GROUP BY location
-ORDER BY umrtí DESC;
+ORDER BY umrtÃ­ DESC;
 
 
-----Poøadí dle kontitnentu
-SELECT continent, MAX(cast(total_deaths as int)) AS umrtí  FROM PortfolioProjekt..CovidDeaths
-WHERE continent IS NOT NULL --Protože do datasetu se pak serou kontinenty 
+----PoradÃ­ dle kontitnentu
+SELECT continent, MAX(cast(total_deaths as int)) AS umrtÃ­  FROM PortfolioProjekt..CovidDeaths
+WHERE continent IS NOT NULL --ProtoÅ¾e do datasetu se pak serou kontinenty 
 GROUP BY continent
-ORDER BY umrtí DESC;
+ORDER BY umrtÃ­ DESC;
 
-----Global numbers
+----Pocet globalne
 SELECT date, SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(new_cases)*100 AS death_ratio FROM PortfolioProjekt..CovidDeaths
 WHERE continent IS NOT NULL
 GROUP BY date
 ORDER BY 1,2
 
 
--- Looking at total population vs vaccinations
+-- Populace vs Vakcinace
 
---USE CTE
+-- CTE
 WITH PopvsVac (Continent, Location, Date, Population, New_Vaccinations ,Vaccinated)
 AS
 (
@@ -96,7 +96,7 @@ SELECT *, (Vaccinated/Population)*100 AS Vacc_per_pop
 FROM #PercentPopulationVaccinated
 
 
--- Creating view to store date for later visualizations
+-- View pro pozdejsi vizualizace
 
 CREATE VIEW PercentPopulationVaccinated as
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
